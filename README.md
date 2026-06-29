@@ -43,5 +43,5 @@ The optimizer used to find the certificate is not part of the trusted proof. The
 The expanded package includes `certificate/SHA256SUMS.txt` for its files. The ZIP uploaded here has SHA-256:
 
 ```text
-d5cb877dfdae22e5f9c13f34abf98982228baa2d37440441a16072cd0074509d
+4bb5526e4808c5c9300b0aa9385d06e2840c53ad6dc4dd2358f3d87b7aca5859
 ```
