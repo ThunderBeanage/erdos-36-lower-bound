@@ -1,0 +1,221 @@
+\documentclass[a4paper]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\dd}{\,d}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\eps}{\varepsilon}
+
+\title{A Certified Lower Bound for Minimum Overlap}
+\date{}
+
+\begin{document}
+
+\begin{abstract}
+We give a self-contained reduction from an Arb-verified dual certificate to a lower bound for Erd\H{o}s' minimum overlap problem.  The certificate consists of mean bins and nonnegative multipliers for elementary moment and Fourier inequalities.  We prove that, if the attached verifier accepts the attached certificate with target $0.38055470$, then the continuous minimum-overlap constant is strictly larger than $0.38055470$.  A step-function argument then transfers this strict lower bound to the original finite problem.  The optimizer that produced the certificate is not used in the proof; only the certificate and the verifier are trusted.
+\end{abstract}
+
+\maketitle
+
+\section{The finite problem and the continuous model}
+
+For a partition $A\sqcup B=\{1,\ldots,2N\}$ with $|A|=|B|=N$, put
+\[
+ r_{A,B}(m)=|\{(a,b)\in A\times B:a-b=m\}|,\qquad R(A,B)=\max_{m\in\Z} r_{A,B}(m),
+\]
+and define
+\[
+ c_E=\liminf_{N\to\infty}\;\frac{1}{N}\min_{\substack{A\sqcup B=\{1,\ldots,2N\}\\ |A|=|B|=N}} R(A,B).
+\]
+This is the usual asymptotic constant in Erd\H{o}s' minimum overlap problem \cite{Erdos1956,Haugland2016,White2022}.
+
+Let $\mathcal H$ be the class of measurable functions $h:[0,2]\to[0,1]$ with $\int_0^2 h=1$.  Extend $h$ by zero outside $[0,2]$, put $g=1-h$ on $[0,2]$, and also extend $g$ by zero.  The associated overlap function is
+\[
+ p_h(t)=\int_\R h(x)g(x+t)\dd x,\qquad -2\le t\le 2.
+\]
+It is nonnegative, continuous, supported on $[-2,2]$, and satisfies $\int_{-2}^2 p_h(t)\dd t=1$.  Define the continuous minimum-overlap constant
+\[
+ c_{\rm cont}=\inf_{h\in\mathcal H}\|p_h\|_\infty .
+\]
+The following elementary one-sided reduction is all that is needed here.
+
+\begin{lemma}\label{lem:discrete-continuous}
+One has $c_E\ge c_{\rm cont}$.  Consequently, any strict lower bound for $c_{\rm cont}$ is also a strict lower bound for $c_E$.
+\end{lemma}
+
+\begin{proof}
+Fix $A\sqcup B=\{1,\ldots,2N\}$ with $|A|=|B|=N$, and let $I_k=[(k-1)/N,k/N)$ for $1\le k\le 2N$.  Define $h_N=\sum_{a\in A}\one_{I_a}$ and $g_N=\sum_{b\in B}\one_{I_b}$.  Then $h_N\in\mathcal H$, and for $\tau(u)=(1-|u|)_+$,
+\[
+ p_{h_N}(t)=\frac1N\sum_{a\in A,\,b\in B}\tau\bigl(Nt-(b-a)\bigr).
+\]
+For each real $x$, the numbers $\tau(x-d)$ are nonzero for at most two integers $d$, and their sum is at most $1$.  Hence $p_{h_N}(t)\le N^{-1}\max_d |\{(a,b)\in A\times B:b-a=d\}|=R(A,B)/N$.  Taking suprema in $t$, then minima over partitions, and finally the liminf in $N$, gives the claim.
+\end{proof}
+
+\section{Analytic inequalities and the dual certificate}
+
+For $h\in\mathcal H$, let $p=p_h$ and set $\mu=\int_{-2}^2 t p(t)\dd t$.  If $X$ and $Y$ are independent random variables with densities $h$ and $g$, then $p$ is the density of $Y-X$.  Since $h+g=1$ on $[0,2]$, $\int x(h+g)\dd x=2$ and $\int x^2(h+g)\dd x=8/3$.  Also $0\le h\le1$ and $\int h=1$, so $\int xh(x)\dd x\in[1/2,3/2]$ by the usual rearrangement bound.  Therefore $\mu\in[-1,1]$ and
+\begin{equation}\label{eq:moment2}
+ \int_{-2}^2 t^2p(t)\dd t=\frac23+\frac{\mu^2}{2}.
+\end{equation}
+
+For the Fourier inequalities, use the centred transforms
+\[
+ H(\xi)=\int_0^2 h(x)e^{i\xi(x-1)}\dd x,
+ \qquad G(\xi)=\int_0^2 g(x)e^{i\xi(x-1)}\dd x,
+\]
+so that $H(\xi)+G(\xi)=2\sigma$, where $\sigma=\sinc(\xi)=\sin\xi/\xi$ for $\xi\ne0$ and $\sinc(0)=1$.  Since $0\le h,g\le1$ and $\int h=\int g=1$, $|H(\xi)|\le1$ and $|G(\xi)|\le1$.  Moreover
+\[
+ \int_{-2}^2 p(t)e^{i\xi t}\dd t=\overline{H(\xi)}G(\xi).
+\]
+Writing $H(\xi)-G(\xi)=a+ib$, with $a,b\in\R$, gives
+\[
+ \overline{H}G=\sigma^2-\frac{a^2+b^2}{4}-i\sigma b.
+\]
+Thus, with $C_\xi=\int p(t)\cos(\xi t)\dd t$ and $S_\xi=\int p(t)\sin(\xi t)\dd t$, one has
+\begin{equation}\label{eq:fourier-ineqs}
+ 2\sigma^2-1\le C_\xi\le\sigma^2,
+ \qquad |S_\xi|\le2|\sigma|\sqrt{1-\sigma^2},
+ \qquad C_\xi+\alpha S_\xi\le(1+\alpha^2)\sigma^2
+\end{equation}
+for every real $\alpha$.  The last inequality follows from completing the square in $b$; the sign convention for $S_\xi$ only changes $b$ to $-b$.
+
+Let $I=[\ell,u]\subset[-1,1]$ be a mean bin, and define
+\[
+ m_-(I)=\min_{\mu\in I}\mu^2,
+ \qquad m_+(I)=\max_{\mu\in I}\mu^2.
+\]
+The certificate language consists of inequalities $\int p(t)\phi(t)\dd t\le B_I(\phi)$ of the following forms.  In the trigonometric rows $\xi\ne0$ and $\sigma=\sinc(\xi)$.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+kind & $\phi(t)$ & certified right-hand side $B_I(\phi)$ \\
+\midrule
+$t$ & $t$ & $u$ \\
+$-t$ & $-t$ & $-\ell$ \\
+$t^2$ & $t^2$ & $2/3+m_+(I)/2$ \\
+$-t^2$ & $-t^2$ & $-2/3-m_-(I)/2$ \\
+$\cos$ & $\cos(\xi t)$ & $\sigma^2$ \\
+$-\cos$ & $-\cos(\xi t)$ & $1-2\sigma^2$ \\
+$\pm\sin$ & $\pm\sin(\xi t)$ & $2|\sigma|\sqrt{1-\sigma^2}$ \\
+$\cos+\alpha\sin$ & $\cos(\xi t)+\alpha\sin(\xi t)$ & $(1+\alpha^2)\sigma^2$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The moment rows follow from $\mu\in I$ and \eqref{eq:moment2}; the trigonometric rows are exactly \eqref{eq:fourier-ineqs}, including the lower bound $C_\xi\ge2\sigma^2-1$ for the $-\cos$ row.  The attached certificate uses only the kinds $t,-t,t^2,\cos,\sin,-\sin$ and $\cos+\alpha\sin$, but the displayed table is the full language accepted by the verifier.
+
+For a bin $I$, a dual certificate is a finite list of functions $\phi_j$ from the table and multipliers $\lambda_j\ge0$.  The verifier recomputes, rather than trusts, the right-hand sides $B_j=B_I(\phi_j)$ using outward ball arithmetic, and then replaces each $B_j$ by a slightly larger certified number.  Enlarging a right-hand side preserves validity.  Define
+\[
+ q_I(t)=1+\sum_j\lambda_j(B_j-\phi_j(t)),\qquad q_{I,+}(t)=\max(q_I(t),0).
+\]
+If $p$ has mean $\mu\in I$, then $\int p q_I\ge1$.  Hence
+\begin{equation}\label{eq:dual-bound}
+ 1\le\int p q_I\le\int p q_{I,+}\le\|p\|_\infty\int_{-2}^2 q_{I,+}(t)\dd t.
+\end{equation}
+Therefore a certified upper bound $\int q_{I,+}\le D_I$ implies $\|p\|_\infty\ge1/D_I$.
+
+\section{Soundness of the verifier}
+
+The checker is the short program \path{prove_erdos_0380554275_arb.py}; the certificate is \path{erdos_aug_central_gridF400.json}.  Decimal strings in the certificate denote the corresponding decimal real numbers.  The checker encloses these numbers, and all subsequent values obtained from them, in Arb balls.  We use the standard guarantee of ball arithmetic: every arithmetic operation and elementary function call returns a ball containing the exact real result of applying that operation to values in the input balls; see Johansson \cite{Johansson2017}.
+
+The verifier first repairs only tiny endpoint gaps in the mean-bin cover: an initial gap of size at most $10^{-12}$ is closed by widening the first bin, an interior gap of size at most $10^{-12}$ is closed by widening the following bin, and a final gap of size at most $10^{-12}$ is closed by widening the last bin.  Larger gaps are rejected.  Widening a bin can only weaken the mean-bin inequalities, and the verifier recomputes all affected right-hand sides after the repair.  It then checks nonnegativity of all multipliers and constructs $q_I$ for each bin.
+
+It remains to justify the positive-part integration.  For each bin the checker computes an Arb upper bound $M_2$ for $\sup_{-2\le t\le2}|q_I''(t)|$.  On an interval $J=[a,b]$ with centre $c$ and radius $r=(b-a)/2$, Taylor's theorem gives, for all $x\in J$,
+\[
+ q_I(c)-|q_I'(c)|r-\frac12M_2r^2\le q_I(x)\le q_I(c)+|q_I'(c)|r+\frac12M_2r^2.
+\]
+The displayed lower and upper quantities are themselves enclosed by Arb balls.  If the certified upper bound is nonpositive, then $J$ contributes zero to $\int q_{I,+}$.  If the certified lower bound is nonnegative, then $q_{I,+}=q_I$ on $J$, and the checker adds an outward-rounded upper bound for $Q_I(b)-Q_I(a)$, where $Q_I$ is the explicit elementary antiderivative of $q_I$.  In all remaining cases, the interval is bisected unless its width is already at most $10^{-4}$; at that final width the checker adds the conservative quantity $(b-a)\max(0,U_J)$, where $U_J$ is the certified upper bound for $q_I$ on $J$.  Summing these contributions over the final interval partition gives a rigorous upper bound for $\int q_{I,+}$.
+
+The floating-point root search in the program has no logical role beyond proposing an initial subdivision.  If it misses a root, the interval containing that root is still handled by the certified Taylor test, by bisection, or by the final conservative area bound.  Consequently the following implication is purely finite and rigorous: if the checker accepts a certificate at target $C$, then for every mean bin it has produced a real number $D_I<1/C$ satisfying $\int q_{I,+}\le D_I$.
+
+\begin{theorem}\label{thm:main}
+Let $C=0.38055470$.  If the verifier \path{prove_erdos_0380554275_arb.py}, run with target $C$, accepts all bins of the certificate \path{erdos_aug_central_gridF400.json}, then $c_E>C$.
+\end{theorem}
+
+\begin{proof}
+By acceptance, the repaired bins cover $[-1,1]$, and for each bin $I$ the verifier has produced a certified number $D_I<1/C$ with $\int q_{I,+}\le D_I$.  There are finitely many bins, so $D=\max_I D_I$ satisfies $D<1/C$.  For any $h\in\mathcal H$, its mean $\mu$ lies in at least one bin $I$, and \eqref{eq:dual-bound} gives $\|p_h\|_\infty\ge1/D_I\ge1/D>C$.  Thus $c_{\rm cont}\ge1/D>C$.  Lemma \ref{lem:discrete-continuous} gives $c_E\ge c_{\rm cont}>C$.
+\end{proof}
+
+\section{Reproducibility record}
+
+The attached certificate has $172$ mean bins.  The accepted run recorded the worst bin as $[-0.003125,0]$ and certified
+\[
+ D\le 2.62774311482846627342375156536923919568\ldots,
+\]
+whereas
+\[
+ 1/0.38055470=2.62774313390427184318049415760730323394\ldots .
+\]
+Thus the recorded margin on the $D$-side is about $1.91\cdot10^{-8}$.  The corresponding lower bound is $0.38055470276\ldots$.
+
+The verifier should be run against the theorem target itself, not merely against the weaker historical target appearing in the original script.  The reproducibility commands are:
+
+\begin{verbatim}
+python prove_erdos_0380554275_arb.py erdos_aug_central_gridF400.json \
+  --target 0.38055470 --only-bins 0-84 \
+  --csv arb_0_84_0380554700.csv \
+  --json-report arb_0_84_0380554700.json
+
+python prove_erdos_0380554275_arb.py erdos_aug_central_gridF400.json \
+  --target 0.38055470 --only-bins 85-88 \
+  --csv arb_85_88_0380554700.csv \
+  --json-report arb_85_88_0380554700.json
+
+python prove_erdos_0380554275_arb.py erdos_aug_central_gridF400.json \
+  --target 0.38055470 --only-bins 89-171 \
+  --csv arb_89_171_0380554700.csv \
+  --json-report arb_89_171_0380554700.json
+\end{verbatim}
+
+For archival checking, the SHA-256 hashes of the principal files inspected for this proof are:
+\begin{verbatim}
+a2c723d375073bd124c04a690200ca9bf8f598eac506656e1ac9a883e6f4f217
+  erdos_aug_central_gridF400.json
+a825b28f0dd8b8db8f225bcd8af48374c013f2f59de97bdb3d8d8cd62a49f11e
+  prove_erdos_0380554275_arb.py
+759f097684e7f3e678e67a47accdfc8189ef22687d07ac93b624a674fb2e3597
+  combine_arb_reports.py
+\end{verbatim}
+The optimizer and any floating-point search used to find the certificate are not part of the trusted proof.
+
+\begin{thebibliography}{9}
+
+\bibitem{Erdos1956}
+P.~Erd\H{o}s, \emph{Problems and results in additive number theory}, Colloque sur la Th\'eorie des Nombres, Bruxelles, 1955, 127--137, 1956.
+
+\bibitem{Haugland1996}
+J.~K. Haugland, \emph{Advances in the minimum overlap problem}, J. Number Theory \textbf{58} (1996), no.~1, 71--78.
+
+\bibitem{Haugland2016}
+J.~K. Haugland, \emph{The minimum overlap problem revisited}, arXiv:1609.08000, 2016.
+
+\bibitem{Johansson2017}
+F.~Johansson, \emph{Arb: efficient arbitrary-precision midpoint-radius interval arithmetic}, IEEE Trans. Computers \textbf{66} (2017), no.~8, 1281--1292.
+
+\bibitem{Moser1959}
+L.~Moser, \emph{On the minimum overlap problem of Erd\H{o}s}, Acta Arith. \textbf{5} (1959), 117--119.
+
+\bibitem{MotzkinRalstonSelfridge1956}
+T.~S. Motzkin, K.~E. Ralston, and J.~L. Selfridge, \emph{Minimal overlap under translation}, Abstract 62T-245, Bull. Amer. Math. Soc. \textbf{62} (1956), 558.
+
+\bibitem{Swierczkowski1958}
+S.~\'Swierczkowski, \emph{On the intersection of a linear set with the translation of its complement}, Colloq. Math. \textbf{5} (1958), 185--197.
+
+\bibitem{White2022}
+E.~P. White, \emph{Erd\H{o}s' minimum overlap problem}, arXiv:2201.05704, 2022.
+
+\end{thebibliography}
+
+\end{document}
