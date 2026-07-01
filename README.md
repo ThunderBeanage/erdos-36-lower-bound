@@ -11,6 +11,7 @@ for Erdős' minimum overlap problem.
 ## Contents
 
 - `36-lower-bound.tex`: proof note reducing the result to the certified Arb verifier run.
+- `minimum_overlap.pdf`: compiled PDF version of the proof note.
 - `erdos36_0380554700_certificate_final.zip`: archival ZIP package of the certificate and generated verification reports.
 - `certificate/`: expanded copy of the ZIP contents for direct inspection, diffing, and reproduction.
 

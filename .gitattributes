@@ -1,4 +1,5 @@
 *.zip binary
+*.pdf binary
 *.tex text eol=lf
 *.md text eol=lf
 *.py text eol=lf
